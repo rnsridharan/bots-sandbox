@@ -46,13 +46,13 @@
       "defaultValue": "6.9.5"
     },
     "MICROSOFT_APP_ID": {
-      "type": "string"
+      "type": "44dfa8a5-9adf-4d89-a1d6-40ab3a6cd205"
     },
     "MICROSOFT_APP_PASSWORD": {
-      "type": "string"
+      "type": "DxVbzjwA4MZVmDuTosm1dXk"
     },
     "LUIS_MODEL_URL": {
-      "type": "string",
+      "type": "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/839289d1-a3e4-4ef3-9158-0e336459ac1a?subscription-key=016b9224608140afb81457beb51fe317&timezoneOffset=0&verbose=true",
     },
     "BING_SPELL_CHECK_API_KEY": {
       "type": "string",
