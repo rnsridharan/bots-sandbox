@@ -1,3 +1,4 @@
+// Cortona skill integrated with LUIS - 7/15/17
 // This loads the environment variables from the .env file
 require('dotenv-extended').load();
 
@@ -5,6 +6,9 @@ var builder = require('botbuilder');
 var restify = require('restify');
 var Store = require('./store');
 var spellService = require('./spell-service');
+// adding ssml util - 7/17/17
+var ssml = require('./ssml');
+
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -18,8 +22,20 @@ var connector = new builder.ChatConnector({
 });
 server.post('/api/messages', connector.listen());
 
+/**
 var bot = new builder.UniversalBot(connector, function (session) {
     session.send('Sorry, I did not understand \'%s\'. Type \'help\' if you need assistance.', session.message.text);
+});
+*/
+
+/**
+* Create your bot with a function to receive messages from the user.
+* - This function will be called anytime the users utterance isn't
+*   recognized.
+*/
+var bot = new builder.UniversalBot(connector, function (session) {
+   // Just redirect to our 'HelpDialog'.
+   session.replaceDialog('HelpDialog');
 });
 
 // You can provide your own model by specifing the 'LUIS_MODEL_URL' environment variable
@@ -44,7 +60,12 @@ bot.dialog('SearchHotels', [
             next({ response: airportEntity.entity });
         } else {
             // no entities detected, ask user for a destination
-            builder.Prompts.text(session, 'Please enter your destination');
+            //builder.Prompts.text(session, 'Please enter your destination');
+        	builder.Prompts.text(session, 'text based prompt', {                                    
+        	    speak: 'Please enter your destination',                                               
+        	    retrySpeak: 'Sorry, I did not hear you. Please enter your destination',  
+        	    inputHint: builder.InputHint.expectingInput                                              
+        	});
         }
     },
     function (session, results) {
@@ -57,7 +78,8 @@ bot.dialog('SearchHotels', [
             message += ' in %s...';
         }
 
-        session.send(message, destination);
+        //session.send(message, destination);
+        session.say(message);
 
         // Async search
         Store
@@ -70,7 +92,8 @@ bot.dialog('SearchHotels', [
                     .attachmentLayout(builder.AttachmentLayout.carousel)
                     .attachments(hotels.map(hotelAsAttachment));
 
-                session.send(message);
+                //session.send(message);
+                session.say(message, message);
 
                 // End
                 session.endDialog();
@@ -79,7 +102,8 @@ bot.dialog('SearchHotels', [
 ]).triggerAction({
     matches: 'SearchHotels',
     onInterrupted: function (session) {
-        session.send('Please provide a destination');
+        //session.send('Please provide a destination');
+    	session.say('Please provide a destination','Please provide a destination' );
     }
 });
 
@@ -87,7 +111,8 @@ bot.dialog('ShowHotelsReviews', function (session, args) {
     // retrieve hotel name from matched entities
     var hotelEntity = builder.EntityRecognizer.findEntity(args.intent.entities, 'Hotel');
     if (hotelEntity) {
-        session.send('Looking for reviews of \'%s\'...', hotelEntity.entity);
+       // session.send('Looking for reviews of \'%s\'...', hotelEntity.entity);
+        session.say('Looking for reviews of \'%s\'...', 'Looking for reviews of \'%s\'...');
         Store.searchHotelReviews(hotelEntity.entity)
             .then(function (reviews) {
                 var message = new builder.Message()
