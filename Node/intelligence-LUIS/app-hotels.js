@@ -1,6 +1,4 @@
-// Sourashtra Teacher Assistant 7/17/17
-
-
+// Cortona skill integrated with LUIS - 7/15/17
 // This loads the environment variables from the .env file
 require('dotenv-extended').load();
 
@@ -52,51 +50,85 @@ bot.recognizer(recognizer);
 bot.recognizer(recognizer);
 
 
-bot.dialog('TeachVowels', [
+bot.dialog('SearchHotels', [
     function (session, args, next) {
-        session.send('Welcome to Learning Sourashtra language');
+        session.send('Welcome to the Hotels finder! We are analyzing your message: \'%s\'', session.message.text);
 
         // try extracting entities
-        var vowelEntity = builder.EntityRecognizer.findEntity(args.intent.entities, 'Vowel');
-        if (vowelEntity) {
-            // vowel entity detected, continue to next step
-            session.dialogData.searchType = 'vowel';
-            next({ response: vowelEntity.entity });
-       
+        var cityEntity = builder.EntityRecognizer.findEntity(args.intent.entities, 'builtin.geography.city');
+        var airportEntity = builder.EntityRecognizer.findEntity(args.intent.entities, 'AirportCode');
+        if (cityEntity) {
+            // city entity detected, continue to next step
+            session.dialogData.searchType = 'city';
+            next({ response: cityEntity.entity });
+        } else if (airportEntity) {
+            // airport entity detected, continue to next step
+            session.dialogData.searchType = 'airport';
+            next({ response: airportEntity.entity });
         } else {
             // no entities detected, ask user for a destination
             //builder.Prompts.text(session, 'Please enter your destination');
-        	builder.Prompts.text(session, 'Please select the teaching choice', {                                    
-        	    speak: 'Please select the teaching choice',                                               
-        	    retrySpeak: 'Sorry, I did not hear you. Please enter your choice',  
+        	builder.Prompts.text(session, 'Please enter your destination', {                                    
+        	    speak: 'Please enter your destination',                                               
+        	    retrySpeak: 'Sorry, I did not hear you. Please enter your destination',  
         	    inputHint: builder.InputHint.expectingInput                                              
         	});
         }
     },
     function (session, results) {
-        var vowel = results.response;
+        var destination = results.response;
 
-          	saymessage = "Teaching vowels"
+        var message = 'Looking for hotels';
+        var saymessage = 'Looking for hotels';
+        if (session.dialogData.searchType === 'airport') {
+            message += ' near %s airport...';
+            saymessage += ' near ' + destination +  ' airport';
+        } else {
+            message += ' in %s...';
+            saymessage += 'in ' + destination ;
+        }
+
+       
+        session.send(message, destination);
+        	
         // compose message to speak
           
         session.say(saymessage);
- 
-        // End
+
+        // Async search
+        Store
+            .searchHotels(destination)
+            .then(function (hotels) {
+                // args
+                session.send('I found %d hotels:', hotels.length);
+                saymessage = 'I found ' + hotels.length + 'hotels:' ;
+                session.say(saymessage);
+
+                var message = new builder.Message()
+                    .attachmentLayout(builder.AttachmentLayout.carousel)
+                    .attachments(hotels.map(hotelAsAttachment));
+
+                session.send(message);
+                
+                // End
                 session.endDialog();
             });
     }
 ]).triggerAction({
-    matches: 'TeachVowels',
+    matches: 'SearchHotels',
     onInterrupted: function (session) {
-      session.say('Please choose Teachwords or TeachVowels' );
+        //session.send('Please provide a destination');
+    	session.say('Please provide a destination','Please provide a destination' );
     }
 });
 
-bot.dialog('TeachWords', function (session, args) {
+bot.dialog('ShowHotelsReviews', function (session, args) {
     // retrieve hotel name from matched entities
-    var wordsEntity = builder.EntityRecognizer.findEntity(args.intent.entities, 'Words');
-    if (wordsEntity) {
-        saymessage = 'Looking for list of ' + words.entity;
+    var hotelEntity = builder.EntityRecognizer.findEntity(args.intent.entities, 'Hotel');
+    if (hotelEntity) {
+        session.send('Looking for reviews of \'%s\'...', hotelEntity.entity);
+        saymessage = 'Looking for reviews of ' + hotelEntity.entity;
+        session.send('Looking for reviews of \'%s\'...', 'Looking for reviews of \'%s\'...');
         session.say(saymessage);
         Store.searchHotelReviews(hotelEntity.entity)
             .then(function (reviews) {
@@ -107,11 +139,11 @@ bot.dialog('TeachWords', function (session, args) {
             });
     }
 }).triggerAction({
-    matches: 'TeachWords'
+    matches: 'ShowHotelsReviews'
 });
 
 bot.dialog('Help', function (session) {
-    session.endDialog('Please select eithet Teach Vowels or Teach Words');
+    session.endDialog('Hi! Try asking me things like \'search hotels in Seattle\', \'search hotels near LAX airport\' or \'show me the reviews of The Bot Resort\'');
 }).triggerAction({
     matches: 'Help'
 });
@@ -135,24 +167,24 @@ if (process.env.IS_SPELL_CORRECTION_ENABLED === 'true') {
 }
 
 // Helpers
-function vowelAsAttachment(vowel) {
+function hotelAsAttachment(hotel) {
     return new builder.HeroCard()
         .title(hotel.name)
-        .subtitle(hotel.name)
-        .images([new builder.CardImage().url(vowel.image)])
+        .subtitle('%d stars. %d reviews. From $%d per night.', hotel.rating, hotel.numberOfReviews, hotel.priceStarting)
+        .images([new builder.CardImage().url(hotel.image)])
         .buttons([
             new builder.CardAction()
                 .title('More details')
                 .type('openUrl')
-                .value('https://www.google.com))
+                .value('https://www.bing.com/search?q=hotels+in+' + encodeURIComponent(hotel.location))
         ]);
 }
 
-function wordAsAttachment(word) {
+function reviewAsAttachment(review) {
     return new builder.ThumbnailCard()
-        .title(word.title)
-        .text(word.text)
-        .images([new builder.CardImage().url(word.image)]);
+        .title(review.title)
+        .text(review.text)
+        .images([new builder.CardImage().url(review.image)]);
 }
 
 ;
