@@ -4,7 +4,8 @@
 
 var builder = require('botbuilder');
 var request = require('request');
-var ssml = require('./../ssml');
+var lang = 'en';
+var ssml = require('./../ssml/locale/' + lang + '/ssml');
 
 //=========================================================
 //Library creation
@@ -13,19 +14,22 @@ var ssml = require('./../ssml');
 var lib = new builder.Library('localeTools');
 
 exports.createLibrary = function () {
- return lib;
+	 return lib;
 }
+
 
 
 //Add locale picker dialog 
 exports.chooseLocale = function (session, options) {
-    // Start dialog in libraries namespace
+	// Start dialog in libraries namespace
     session.beginDialog('localeTools:chooseLocale', options || {});
 }
 
 
 lib.dialog('chooseLocale', [
     function (session) {
+    	session.send("greeting");
+    	session.send("instructions");
     	 // Prompt the user to select their preferred locale
     	 builder.Prompts.choice(session, "locale_prompt", 'English|Español|Italiano|Sourashtra',
          		{ speak: "What's your preferred language",
@@ -53,7 +57,7 @@ lib.dialog('chooseLocale', [
         session.preferredLocale(locale, function (err) {
             if (!err) {
                 // Locale files loaded
-                session.endDialog(session.gettext('locale_updated_ssml'), 
+                session.endDialog('locale_updated_ssml', 
                 		speak(session, 'locale_updated_ssml'));
             	console.log('speaking in ' + locale);
             	

@@ -9,11 +9,13 @@ A simple Sourashtra speaking bot that can be run from a console window.
 require('dotenv-extended').load();
 var restify = require('restify');
 var builder = require('botbuilder');
-var ssml = require('./ssml');
+//default English ssml file
+var ssml = require('./lib/ssml/locale/en/ssml');
+
 //library functions for managing the locale
-var localeTools = require('./lib/localeTools'); 
+var localeTools = require('./lib/utils/localeTools'); 
 //library functions for managing the locale
-var testUtils1 = require('./lib/testutils1'); 
+var testUtils1 = require('./lib/utils/testutils1'); 
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -29,10 +31,11 @@ server.post('/api/messages', connector.listen());
 
 var bot = new builder.UniversalBot(connector, [
 	function (session) {
-		// set locale
-	localeTools.chooseLocale(session);
-	},
+	// set locale
+	localeTools.chooseLocale(session);	
+		},
 	function (session, results){
+		console.log("User selected locale - " + session.preferredLocale());
 
 	    // invoke greetings
 	    testUtils1.startGreetings(session);
@@ -46,12 +49,6 @@ bot.library(localeTools.createLibrary());
 // Add testutils-1 library
 bot.library(testUtils1.createLibrary());
 
-
-//optionally Install language detection middleware. Follow instructions at:
-//
-//      https://azure.microsoft.com/en-us/documentation/articles/cognitive-services-text-analytics-quick-start/
-//
-// bot.use(localeTools.languageDetection(process.env.LANGUAGE_DETECTION_KEY));
 
 
 
