@@ -120,7 +120,7 @@ bot.dialog('greeting',  [
     		});
         //session.send("time_response", JSON.stringify(results.response));
         
-    	session.say('demo mujjo', 
+    	ession.say('demo mujjo', 
     			{speak: speak(session, 'demo mujjo'),
     		inputHint: builder.InputHint.ignoringInput 
     		});
