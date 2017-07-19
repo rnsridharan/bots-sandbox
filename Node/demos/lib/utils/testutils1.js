@@ -6,17 +6,6 @@ var lang = 'en';
 var ssml = require('./../ssml/locale/' + lang + '/ssml');
 
 
-// Create your bot with a function to receive messages from the user
-
-// ensure that each bot being federated over has a unique library name.
-//var bot = new builder.UniversalBot(null, null, 'testutils1');
-
-// Export createLibrary() function
-/*
- * exports.createLibrary = function () {
-    return bot.clone();
-}
- */
 
 var lib = new builder.Library('testutils1');
 

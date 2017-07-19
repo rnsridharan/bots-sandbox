@@ -32,8 +32,8 @@ lib.dialog('chooseLocale', [
     	session.send("instructions");
     	 // Prompt the user to select their preferred locale
     	 builder.Prompts.choice(session, "locale_prompt", 'English|Español|Italiano|Sourashtra',
-         		{ speak: "What's your preferred language",
-         		  retrySpeak: "What's your preferred language",
+         		{ speak: session.gettext("locale_prompt"),
+         		  retrySpeak: session.gettext("locale_prompt"),
          		  inputHint: builder.InputHint.expectingInput
          		});
     	     },
@@ -57,8 +57,8 @@ lib.dialog('chooseLocale', [
         session.preferredLocale(locale, function (err) {
             if (!err) {
                 // Locale files loaded
-                session.endDialog('locale_updated_ssml', 
-                		speak(session, 'locale_updated_ssml'));
+                session.endDialog('locale_updated', 
+                		speak(session, 'locale_updated'));
             	console.log('speaking in ' + locale);
             	
             } else {
