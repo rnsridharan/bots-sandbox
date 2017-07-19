@@ -1,7 +1,7 @@
 
 /*-----------------------------------------------------------------------------
 
-Echo bot for basic validation of channels, connections, etc
+Echo bot for basic validation of channels, connections,ssml features etc
 
 -----------------------------------------------------------------------------*/
 
@@ -9,8 +9,7 @@ Echo bot for basic validation of channels, connections, etc
 require('dotenv-extended').load();
 var restify = require('restify');
 var builder = require('botbuilder');
-
-// default English ssml file
+//default English ssml file
 var ssml = require('./lib/ssml/locale/en/ssml');
 
 
