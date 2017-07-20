@@ -1,5 +1,4 @@
 {
-    "greeting": ["Welcome to the localization sample bot.", "Hey there. I'm the localization sample bot.", "Greetings... I'm the localization sample bot."],
+    "greeting": ["avo avo. me onte robot.", "me tunga oppaye bhasham vatho keru", "namaskar. me onte sample bot."],
     "choice_options": "Option A|Option B|Option C"
 }
-    

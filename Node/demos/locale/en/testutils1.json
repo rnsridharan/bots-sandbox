@@ -16,7 +16,7 @@
 	    "input_response": "You entered '%s'",
 	    "input_response": "You entered '%s'",
 	    "choice_response": "You chose '%s'",
-	    "choice_response_ssml": "You chose '%s'",
+	    "choice_response_ssml": "You chose ",
 	    "time_response": "JSON for time entered: %s",
 	    "time_response_ssml": "JSON for time entered: %s",
 	    "demo_finished": ["That's the end of the demo.", "Thank you. That's the end."],
