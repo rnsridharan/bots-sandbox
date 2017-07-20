@@ -6,9 +6,9 @@ var lang = 'en';
 var ssml = require('./../ssml/locale/' + lang + '/ssml');
 
 
+var namespace = 'testutils1_sou';
+var lib = new builder.Library(namespace);
 
-var lib = new builder.Library('testutils1');
-var namespace = 'testutils1';
 
 exports.createLibrary = function () {
  return lib;
@@ -16,7 +16,7 @@ exports.createLibrary = function () {
 
 exports.startGreetings = function (session, options){
 	session.preferredLocale(session.preferredLocale());
-	session.beginDialog('testutils1:greeting', options || {} );
+	session.beginDialog(namespace + ':greeting', options || {} );
 }
 
 

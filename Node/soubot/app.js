@@ -13,9 +13,9 @@ var builder = require('botbuilder');
 var ssml = require('./lib/ssml/locale/en/ssml');
 
 //library functions for managing the locale
-var localeTools = require('./lib/utils/localeTools'); 
+//var localeTools = require('./lib/utils/localeTools'); 
 //library functions for managing the locale
-var testUtils1 = require('./lib/utils/testutils1'); 
+var testUtils2 = require('./lib/utils/testutils2'); 
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -32,22 +32,17 @@ server.post('/api/messages', connector.listen());
 var bot = new builder.UniversalBot(connector, [
 	function (session) {
 	// set locale
-	localeTools.chooseLocale(session);	
-		},
-	function (session, results){
-		console.log("User selected locale - " + session.preferredLocale());
-
-	    // invoke greetings
-	    testUtils1.startGreetings(session);
-	}
+	//localeTools.chooseLocale(session);
+		testUtils2.startDisplayRichcards(session);
+		}
 		
 ]);
 
 //Add locale tools library to bot
-bot.library(localeTools.createLibrary());
+//bot.library(localeTools.createLibrary());
 
 // Add testutils-1 library
-bot.library(testUtils1.createLibrary());
+bot.library(testUtils2.createLibrary());
 
 
 
