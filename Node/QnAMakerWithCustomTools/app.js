@@ -2,6 +2,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var cognitiveservices = require('botbuilder-cognitiveservices');
+var customQnAMakerTools = require('./CustomQnAMakerTools');
 //This loads the environment variables from the .env file
 require('dotenv-extended').load();
 
@@ -27,18 +28,19 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
-
-// get knowledgeBaseId and subscriptionKey from .env file
-
-
 var recognizer = new cognitiveservices.QnAMakerRecognizer({
 	knowledgeBaseId: process.env.KNOWLEDGE_BASE_ID, 
-	subscriptionKey: process.env.SUBSCRIPTION_KEY});
+	subscriptionKey: process.env.SUBSCRIPTION_KEY,
+	top: 4});
+
+var customQnAMakerTools = new customQnAMakerTools.CustomQnAMakerTools();
+bot.library(customQnAMakerTools.createLibrary());
 	
 var basicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({
 	recognizers: [recognizer],
 	defaultMessage: 'No match! Try changing the query terms!',
-	qnaThreshold: 0.3
+	qnaThreshold: 0.3,
+	feedbackLib: customQnAMakerTools
 });
 
 bot.dialog('/', basicQnAMakerDialog);

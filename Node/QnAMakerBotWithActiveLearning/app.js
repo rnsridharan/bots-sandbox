@@ -27,18 +27,19 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
-
-// get knowledgeBaseId and subscriptionKey from .env file
-
-
 var recognizer = new cognitiveservices.QnAMakerRecognizer({
 	knowledgeBaseId: process.env.KNOWLEDGE_BASE_ID, 
-	subscriptionKey: process.env.SUBSCRIPTION_KEY});
-	
+	subscriptionKey: process.env.SUBSCRIPTION_KEY,
+	top: 3});
+
+var qnaMakerTools = new cognitiveservices.QnAMakerTools();
+bot.library(qnaMakerTools.createLibrary());
+
 var basicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({
 	recognizers: [recognizer],
 	defaultMessage: 'No match! Try changing the query terms!',
-	qnaThreshold: 0.3
+	qnaThreshold: 0.3,
+	feedbackLib: qnaMakerTools
 });
 
 bot.dialog('/', basicQnAMakerDialog);
