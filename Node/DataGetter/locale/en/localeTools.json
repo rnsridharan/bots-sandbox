@@ -1,0 +1,11 @@
+{
+    "greeting": ["Welcome to the localization sample bot.", "Hey there. I'm the localization sample bot.", "Greetings... I'm the localization sample bot."],
+    "instructions": "This demo will first ask you to select a preferred language and then walk through using all of the built-in prompts in that language.",
+    "locale_prompt": "What's your preferred language?",
+    "locale_prompt_ssml": "What's your preferred language?",
+    "locale_updated": "Your preferred language is now english.",
+    "locale_updated_ssml": "Your preferred language is now english.",
+    "locale_updated_ssml": "Your preferred language is now english.",
+    "err_prompt": "Error in setting locale"
+    
+}

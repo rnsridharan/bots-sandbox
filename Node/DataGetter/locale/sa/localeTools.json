@@ -1,0 +1,7 @@
+{
+    "greeting": ["avo avo. me onte robot.", "me tunga oppaye bhasham vatho keru", "namaskar. me onte sample bot."],
+    "instructions": "elle demo mudullo ture bhasho kayo meni pusai.. thega pharatu kaay kenno meni sangilet avai",
+    "locale_prompt": "tungo kolle bhasham me vatho keru ?",
+    "locale_updated": "atho me sourashtra bhasham vatho kera riyo.",
+    "err_prompt": "Error in setting locale"
+}
