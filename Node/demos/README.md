@@ -1,6 +1,6 @@
-# Roller Skill Bot Sample
+# Demo Bots
 
-A simple dice rolling skill/bot that's been optimized for speech-enabled channels such as Cortana.
+These bots will demonistrate the Bots functions.
 
 [![Deploy to Azure][Deploy Button]][Deploy Node/RollerSkill]
 
@@ -18,7 +18,7 @@ The minimum prerequisites to run this sample are:
     * Enable the Cortana Channel and register your bot as a Cortana skill. Refer to [this](https://docs.microsoft.com/en-us/bot-framework/portal-configure-channels) for more information on how to configure channels and to [this](https://docs.microsoft.com/en-us/bot-framework/channels/channel-cortana) and [this](https://docs.microsoft.com/en-us/cortana/tutorials/bot-skills/add-bot-to-cortana-channel) for specific information on how to add the Cortana channel to your bot.
     *  [Publish your bot, for example to Azure](https://docs.microsoft.com/en-us/bot-framework/deploy-bot-overview) or [Debug an Azure Bot Service bot](https://docs.microsoft.com/en-us/bot-framework/azure/azure-bot-service-debug-bot).
 
-### Code Highlights
+### Demo Highlights
 
 Many channels provides an audio component besides the usual visual component, allowing your bot to have a voice. This sample showcases the use of new features designed specifically for speech:
 
