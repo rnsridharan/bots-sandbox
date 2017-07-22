@@ -11,7 +11,12 @@ var restify = require('restify');
 var builder = require('botbuilder');
 
 // include worker bots 
-var signinbot = require('./demolib/signin');
+var signinbot = require('./workers/signin');
+var echobot = require('./workers/echo');
+var polyglotbot = require('./workers/polyglot');
+var datacollectorbot = require('./workers/datacollector');
+var qnabot = require('./workers/qna');
+var knowledgebot = require('./workers/knowledge');
 
 
 // Setup Restify Server
@@ -38,12 +43,19 @@ var DemoLabels = {
 	};
 
 var bot = new builder.UniversalBot(connector, [
-	function (session) {
+	function (session){
+		// start the conversation with log in
+		signinbot.beginDialog(session);
+		// end dialog and conversation if the  signbot returns authentication failure message
+		// if authentication successful , then proceed with  next steps
+		
+	},
+	function (session, results) {
         // prompt for search option
         builder.Prompts.choice(
             session,
-            'Do you want to have a demo?.. Please choose one in the list',
-            [DemoLabels.Signin, DemoLabels.Echo,  DemoLabels.Polyglot, DemoLabels.Datacollector,
+            'Do you want to have a demo?.. Please choose one of the demos from the list',
+            [DemoLabels.Echo,  DemoLabels.Polyglot, DemoLabels.Datacollector,
             	 DemoLabels.QnA, DemoLabels.Knowledge],
             {
                 maxRetries: 3,
@@ -63,36 +75,40 @@ var bot = new builder.UniversalBot(connector, [
             session.endDialog();
         });
 
-        // continue on proper dialog
+        // invoke worker bots based on user selection
         var selection = result.response.entity;
         switch (selection) {
-            case DemoLabels.Signin:
-                //return session.beginDialog('signin');
-            	return signinbot.beginDialog(session);
-            case DialogLabels.Echo:
-                return session.beginDialog('echo');
-            case DialogLabels.Polyglot:
-                return session.beginDialog('polyglot');
-            case DialogLabels.Datacollector:
-                return session.beginDialog('datacollector');
-            case DialogLabels.QnA:
-                return session.beginDialog('qna');
-            case DialogLabels.Knowledge:
-                return session.beginDialog('knowledge');
+            case DemoLabels.Echo:
+                return echobot.beginDialog(session);
+            case DemoLabels.Polyglot:
+                return polyglotbot.beginDialog(session);
+            case DemoLabels.Datacollector:
+                return datacollectorbot.beginDialog(session);
+            case DemoLabels.QnA:
+                return qnabot.beginDialog(session);
+            case DemoLabels.Knowledge:
+                return knowledgebot.beginDialog(session);
                           
         }
     }
 ]);
 
 
+// add worker bots to maaster bot
+
 //bot.dialog('signin', require('./demolib/signin'));
 bot.library(signinbot.createLibrary());
-bot.dialog('echo', require('./demolib/echo'));
-bot.dialog('polyglot', require('./demolib/polyglot'));
-bot.dialog('datacollector', require('./demolib/datacollector'));
-bot.dialog('qna', require('./demolib/qna'));
+//bot.dialog('echo', require('./demolib/echo'));
+bot.library(echobot.createLibrary());
+//bot.dialog('polyglot', require('./demolib/polyglot'));
+bot.library(polyglotbot.createLibrary());
+//bot.dialog('datacollector', require('./demolib/datacollector'));
+bot.library(datacollectorbot.createLibrary());
+//bot.dialog('qna', require('./demolib/qna'));
+bot.library(qnabot.createLibrary());
 //bot.dialog('knowledge', require('./demolib/knowledge'));
-bot.dialog('help', require('./demolib/help'))
+bot.library(knowledgebot.createLibrary());
+bot.dialog('help', require('./workers/help'))
     .triggerAction({
         matches: [/help/i, /support/i, /problem/i]
     });

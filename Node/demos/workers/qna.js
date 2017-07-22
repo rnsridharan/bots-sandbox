@@ -12,6 +12,19 @@ var util = require('util');
 //=========================================================
 
 
+var bot = new builder.UniversalBot(null, null, 'qnabot');
+
+//Export createLibrary() function
+exports.createLibrary = function () {
+return bot.clone();
+}
+
+exports.beginDialog = function(session){
+	session.beginDialog('qna:/');
+}
+
+
+
 
 //=========================================================
 // Bots Dialogs
@@ -54,7 +67,7 @@ basicQnAMakerDialog.defaultWaitNextMessage = function(session, qnaMakerResult){
 	session.endDialog();
 }
 
-module.exports =  basicQnAMakerDialog;
+bot.dialog('/',  basicQnAMakerDialog);
 
 //Sends attachment inline in base64
 function sendRichAnswer(session, answer, filePath, contentType, attachmentFileName) {

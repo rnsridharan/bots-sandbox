@@ -13,7 +13,7 @@ var ssml = require('./../lib/ssml/locale/en/ssml');
 
 //For federation you don't need to provide a connector but you should
 //ensure that each bot being federated over has a unique library name.
-var bot = new builder.UniversalBot(null, null, 'signinbot');
+var bot = new builder.UniversalBot(null, null, 'echobot');
 
 //Export createLibrary() function
 exports.createLibrary = function () {
@@ -21,7 +21,7 @@ exports.createLibrary = function () {
 }
 
 exports.beginDialog = function(session){
-	session.beginDialog('signinbot:loopConversation');
+	session.beginDialog('echobot:loopConversation');
 }
 
 bot.dialog('loopConversation', [

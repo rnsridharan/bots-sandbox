@@ -9,9 +9,19 @@ var builder = require('botbuilder');
 //default English ssml file
 var ssml = require('./../lib/ssml/locale/en/ssml');
 
+var bot = new builder.UniversalBot(null, null, 'datacollectorbot');
+
+//Export createLibrary() function
+exports.createLibrary = function () {
+return bot.clone();
+}
+
+exports.beginDialog = function(session){
+	session.beginDialog('datacollectorbott:/');
+}
 
 
-module.exports = [
+bot.dialog('/',  [
 	function (session) {
         builder.Prompts.text(session, "Hello... What's your name?");
     },
@@ -29,7 +39,7 @@ module.exports = [
                     " you've been programming for " + session.userData.coding + 
                     " years and use " + session.userData.language + ".");
     }
-];
+]);
 
 
 /** Helper function to wrap SSML stored in the prompts file with <speak/> tag. */

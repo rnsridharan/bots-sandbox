@@ -16,8 +16,19 @@ var localeTools = require('./../lib/utils/localeTools');
 var testUtils1 = require('./../lib/utils/testutils1'); 
 
 
+var bot = new builder.UniversalBot(null, null, 'polyglotbot');
 
-module.exports = [
+//Export createLibrary() function
+exports.createLibrary = function () {
+return bot.clone();
+}
+
+exports.beginDialog = function(session){
+	session.beginDialog('polyglotbot:chooseLocale');
+}
+
+
+bot.dialog('chooseLocale', [
 	function (session) {
 	// set locale
 	localeTools.chooseLocale(session);	
@@ -29,7 +40,7 @@ module.exports = [
 	    testUtils1.startGreetings(session);
 	}
 		
-];
+]);
 
 //Add locale tools library to bot
 builder.Library(localeTools.createLibrary());
