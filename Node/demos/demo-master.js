@@ -10,6 +10,7 @@ require('dotenv-extended').load();
 var restify = require('restify');
 var builder = require('botbuilder');
 
+
 // include worker bots 
 var signinbot = require('./workers/signin');
 var echobot = require('./workers/echo');
@@ -62,8 +63,8 @@ var bot = new builder.UniversalBot(connector, [
                 retryPrompt: 'Not a valid option'
             });
     },
-    function (session, result) {
-        if (!result.response) {
+    function (session, results,  next) {
+        if (!results.response) {
             // exhausted attemps and no selection, start over
             session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
             return session.endDialog();
@@ -76,7 +77,7 @@ var bot = new builder.UniversalBot(connector, [
         });
 
         // invoke worker bots based on user selection
-        var selection = result.response.entity;
+        var selection = results.response.entity;
         switch (selection) {
             case DemoLabels.Echo:
                 return echobot.beginDialog(session);
@@ -90,23 +91,36 @@ var bot = new builder.UniversalBot(connector, [
                 return knowledgebot.beginDialog(session);
                           
         }
+        
+        next();
+    },
+    function (session, results){
+    	
+    	// check if the user wants to try more demos
+    	builder.Prompts.confirm(session, "You successfuly completed the demo. Do want to try more demos ?",
+        		{ speak: "Do want to try more demos ?",
+	  		  retrySpeak:"Do want to try more demos ?",
+	  		  inputHint: builder.InputHint.expectingInput
+		});
+    },
+    function(session, results) {
+    	
+    	if (results)
+    		session.replaceDialog('/');
+    	else
+    		senssion.endDialog("Thank you for seeing my demo.. Bye..");
+    	
     }
 ]);
 
 
 // add worker bots to maaster bot
 
-//bot.dialog('signin', require('./demolib/signin'));
 bot.library(signinbot.createLibrary());
-//bot.dialog('echo', require('./demolib/echo'));
 bot.library(echobot.createLibrary());
-//bot.dialog('polyglot', require('./demolib/polyglot'));
 bot.library(polyglotbot.createLibrary());
-//bot.dialog('datacollector', require('./demolib/datacollector'));
 bot.library(datacollectorbot.createLibrary());
-//bot.dialog('qna', require('./demolib/qna'));
 bot.library(qnabot.createLibrary());
-//bot.dialog('knowledge', require('./demolib/knowledge'));
 bot.library(knowledgebot.createLibrary());
 bot.dialog('help', require('./workers/help'))
     .triggerAction({
@@ -117,6 +131,4 @@ bot.dialog('help', require('./workers/help'))
 bot.on('error', function (e) {
     console.log('And error ocurred', e);
 });
-
-
 

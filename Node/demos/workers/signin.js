@@ -31,6 +31,7 @@ bot.dialog('showSigninCard', [
         // attach the card to the reply message
         var msg = new builder.Message(session).addAttachment(card);
         session.send(msg);
+        session.endDialog("Please complete authentication..");
     }
 
  ]);

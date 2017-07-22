@@ -29,8 +29,8 @@ bot.dialog('loopConversation', [
     	if (!args)
     		{
     		//basic prompt    		
-    		builder.Prompts.text(session, 'Hi, I am an echo bot. Please say something..I will echo it back', 
-            		{speak: speak(session, 'Hi, I am an echo bot. Please say something..I will echo it back'),
+    		builder.Prompts.text(session, 'Hi, I am an echo bot. Please say something..I will echo it back until you say Bye or End', 
+            		{speak: speak(session, 'Hi, I am an echo bot. Please say something..I will echo it back until you say Bye or End'),
             		inputHint: builder.InputHint.expectingInput
             		});
     		}
