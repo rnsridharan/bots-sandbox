@@ -3,5 +3,6 @@
     "instructions": "elle demo mudullo ture bhasho kayo meni pusai.. thega pharatu kaay kenno meni sangilet avai",
     "locale_prompt": "tungo kolle bhasham me vatho keru ?",
     "locale_updated": "atho me sourashtra bhasham vatho kera riyo.",
-    "err_prompt": "Error in setting locale"
+    "err_prompt": "Error in setting locale",
+    "courtesy_prompt_1": "ture naav moga kaladuvo ?"
 }

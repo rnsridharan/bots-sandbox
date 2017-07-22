@@ -28,15 +28,27 @@ exports.chooseLocale = function (session, options) {
 
 lib.dialog('chooseLocale', [
     function (session) {
-    	session.send("greeting");
-    	session.send("instructions");
-    	 // Prompt the user to select their preferred locale
+    	builder.Prompts.text(session,"greeting" ,
+    			{speak: speak(session, "greeting"),
+    			inputHint: builder.InputHint.acceptingInput
+    			});
+    },
+    function (session, results, next) {
+    	builder.Prompts.text(session, "instructions",
+    			{speak: speak(session, "instructions"),
+    			inputHint: builder.InputHint.acceptingnput
+    			});
+    	next();
+    },
+    function (session, results) {
+    	// Prompt the user to select their preferred locale
     	 builder.Prompts.choice(session, "locale_prompt", 'English|Español|Italiano|Sourashtra',
-         		{ speak: session.gettext("locale_prompt"),
-         		  retrySpeak: session.gettext("locale_prompt"),
+         		{ speak: speak(session, "locale_prompt"),
+         		  retrySpeak: speak(sesssion, "locale_prompt"),
          		  inputHint: builder.InputHint.expectingInput
          		});
-    	     },
+    },
+    	     
     function (session, results) {
         // Update preferred locale
         var locale;
