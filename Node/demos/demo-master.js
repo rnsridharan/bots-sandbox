@@ -18,7 +18,8 @@ var polyglotbot = require('./workers/polyglot');
 var datacollectorbot = require('./workers/datacollector');
 var qnabot = require('./workers/qna');
 var knowledgebot = require('./workers/knowledge');
-
+//include DemoHelpers functions
+var demohelpers = require('./utils/DemoHelpers');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -84,7 +85,7 @@ var bot = new builder.UniversalBot(connector, [
             case DemoLabels.Echo:
                 return echobot.beginDialog(session);
             case DemoLabels.Polyglot:
-                return polyglot.beginDialog(session);
+                return polyglotbot.beginDialog(session);
             case DemoLabels.Datacollector:
                return  datacollectorbot.beginDialog(session);
             case DemoLabels.QnA:
@@ -112,7 +113,9 @@ var bot = new builder.UniversalBot(connector, [
     	}
     		
     	else
-    		session.endDialog("Thank you for your time to watch my demo.. Bye..");
+    		session.endDialog("Thank you for your time to watch my demo.. Bye..",
+    			{speak: demohelpers.speak(session,"Thank you for your time to watch my demo. Bye")
+    			});
     	
     }
 ]);

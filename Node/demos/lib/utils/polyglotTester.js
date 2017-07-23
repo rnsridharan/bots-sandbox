@@ -4,6 +4,8 @@
 var builder = require('botbuilder');
 var lang = 'en';
 var ssml = require('./../ssml/locale/' + lang + '/ssml');
+//include DemoHelpers functions
+var demohelpers = require('./../..//utils/DemoHelpers');
 
 
 
@@ -25,21 +27,30 @@ exports.beginDialog = function(session, options){
 
 bot.dialog('greeting',  [
     function (session) {
-    		builder.Prompts.text(session, "text_prompt");
+    		builder.Prompts.text(session, "text_prompt",
+    				{speak: demohelpers.speak(session,"text_prompt")
+    				}    		
+    				);
     	   },
     	    function (session, results) {
     	        session.send("input_response", results.response);
-    	        builder.Prompts.number(session, "number_prompt");
+    	        builder.Prompts.number(session, "number_prompt",
+    	        		{speak: demohelpers.speak(session,"number_prompt")
+        				} );
     	    },
     	    function (session, results) {
     	        session.send("input_response", results.response);
-    	        builder.Prompts.choice(session, "listStyle_prompt", "auto|inline|list|button|none");
+    	        builder.Prompts.choice(session, "listStyle_prompt", "auto|inline|list|button|none",
+    	        		{speak: demohelpers.speak(session,"listStyle_prompt")
+        				});
     	    },
     	    function (session, results) {
     	        // You can use the localizer manually to load a localized list of options.
     	        var style = builder.ListStyle[results.response.entity];
     	        var options = session.localizer.gettext(session.preferredLocale(), "choice_options");
-    	        builder.Prompts.choice(session, "choice_prompt", options, { listStyle: style });
+    	        builder.Prompts.choice(session, "choice_prompt", options, { listStyle: style },
+    	        		{speak: demohelpers.speak(session,"choice_prompt")
+        				});
     	    },
     	    function (session, results) {
     	        session.send("choice_response", results.response.entity);
@@ -49,11 +60,15 @@ bot.dialog('greeting',  [
     	        // You can use the localizer manually to load prompts from another namespace.
     	        var choice = results.response ? 'confirm_yes' : 'confirm_no';
     	        session.send("choice_response", session.localizer.gettext(session.preferredLocale(), choice, 'BotBuilder'));
-    	        builder.Prompts.time(session, "time_prompt");
+    	        builder.Prompts.time(session, "time_prompt",
+    	        		{speak: demohelpers.speak(session,"choice_prompt")
+        				});
     	    },
     	    function (session, results) {
     	        session.send("time_response", JSON.stringify(results.response));
-    	        session.endDialog("demo_finished");
+    	        session.endDialog("demo_finished",
+    	        		{speak: demohelpers.speak(session,"choice_prompt")
+        				});
     	    }
     	]);
 
