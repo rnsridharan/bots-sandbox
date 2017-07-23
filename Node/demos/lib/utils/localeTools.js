@@ -8,25 +8,23 @@ var lang = 'en';
 var ssml = require('./../ssml/locale/' + lang + '/ssml');
 
 //=========================================================
-//Library creation
+//Library bot creation
 //=========================================================
 
-var lib = new builder.Library('localeTools');
+var bot = new builder.UniversalBot(null, null, 'localeTools');
 
+//Export createLibrary() function
 exports.createLibrary = function () {
-	 return lib;
+return bot.clone();
 }
 
-
-
-//Add locale picker dialog 
-exports.chooseLocale = function (session, options) {
+exports.beginDialog = function(session, options){
 	// Start dialog in libraries namespace
     session.beginDialog('localeTools:chooseLocale', options || {});
 }
 
 
-lib.dialog('chooseLocale', [
+bot.dialog('chooseLocale', [
     function (session) {
     	builder.Prompts.text(session,"greeting" ,
     			{speak: speak(session, "greeting"),
@@ -39,12 +37,12 @@ lib.dialog('chooseLocale', [
     			inputHint: builder.InputHint.acceptingnput
     			});
     	next();
-    },
+    	},
     function (session, results) {
     	// Prompt the user to select their preferred locale
     	 builder.Prompts.choice(session, "locale_prompt", 'English|Español|Italiano|Sourashtra',
          		{ speak: speak(session, "locale_prompt"),
-         		  retrySpeak: speak(sesssion, "locale_prompt"),
+         		  retrySpeak: speak(session, "locale_prompt"),
          		  inputHint: builder.InputHint.expectingInput
          		});
     },

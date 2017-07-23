@@ -1,7 +1,7 @@
 
 /*-----------------------------------------------------------------------------
 
-A simple Sourashtra speaking bot that can be run from a console window.
+A simple multi lingual speaking bot that can be run from a console window.
 
 -----------------------------------------------------------------------------*/
 
@@ -13,7 +13,7 @@ var ssml = require('./../lib/ssml/locale/en/ssml');
 //library functions for managing the locale
 var localeTools = require('./../lib/utils/localeTools'); 
 //library functions for managing the locale
-var testUtils1 = require('./../lib/utils/testutils1'); 
+var polyglotTester = require('./../lib/utils/polyglotTester'); 
 
 
 var bot = new builder.UniversalBot(null, null, 'polyglotbot');
@@ -24,29 +24,32 @@ return bot.clone();
 }
 
 exports.beginDialog = function(session){
-	session.beginDialog('polyglotbot:chooseLocale');
+	session.beginDialog('polyglotbot:speakLocale');
 }
 
 
-bot.dialog('chooseLocale', [
+bot.dialog('speakLocale', [
 	function (session) {
 	// set locale
-	localeTools.chooseLocale(session);	
+	localeTools.beginDialog(session);	
 		},
 	function (session, results){
 		console.log("User selected locale - " + session.preferredLocale());
 
 	    // invoke greetings
-	    testUtils1.startGreetings(session);
+	    polyglotTester.beginDialog(session);
 	}
 		
 ]);
 
 //Add locale tools library to bot
-builder.Library(localeTools.createLibrary());
+// builder.Library(localeTools.createLibrary());
+bot.library(localeTools.createLibrary());
 
 // Add testutils-1 library
-builder.Library(testUtils1.createLibrary());
+//builder.Library(testUtils1.createLibrary());
+bot.library(polyglotTester.createLibrary());
+
 
 
 
