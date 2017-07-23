@@ -1,5 +1,5 @@
 require('dotenv-extended').load();
-var builder = require('botbuilder');
+global.builder = require('botbuilder');
 
 // create global knowledge bot
 global.kbot = new builder.UniversalBot(null, null, 'knowledgebot');

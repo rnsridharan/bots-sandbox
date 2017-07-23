@@ -19,9 +19,17 @@ exports.createLibrary = function () {
 return bot.clone();
 }
 
-exports.beginDialog = function(session){
-	session.beginDialog('qna:/');
-}
+exports.beginDialog = function (session){
+	session.beginDialog('qnabot:/');
+	}
+		
+bot.dialog('/',	function(session){
+				builder.Prompts.text(session, 'Hi, I am FAQ Assistant.. Please ask me your questions. I will try to answer them..');
+			},
+			function (session, results){
+				session.beginDialog('qnabot:/startQnA');
+			}
+);
 
 
 
@@ -64,10 +72,29 @@ basicQnAMakerDialog.defaultWaitNextMessage = function(session, qnaMakerResult){
 			console.log('KB Question: ' + qnaMakerResult.answers[0].questions[0]);
 			console.log('KB Answer: ' + qnaMakerResult.answers[0].answer);
 		}
-	session.endDialog();
+	
+	if (qnaMakerResult.answers[0].questions[0] == 'Done'){
+		session.send("QnA Ended");
+		session.endDialogWithResult("QnA Ended");
+	}
+	else {
+		session.replaceDialog('qnabot:/');
+	}
+	
 }
 
-bot.dialog('/',  basicQnAMakerDialog);
+bot.dialog('/startQnA',basicQnAMakerDialog);
+
+/*
+bot.dialog('/', [
+		function(session) {
+		builder.Prompts.text(session, 'Hi, I am FAQ Assistant.. Please ask me your questions. I will try to answer them..');
+		},
+		function(session, results){
+			basicQnAMakerDialog
+		}
+]);
+*/
 
 //Sends attachment inline in base64
 function sendRichAnswer(session, answer, filePath, contentType, attachmentFileName) {

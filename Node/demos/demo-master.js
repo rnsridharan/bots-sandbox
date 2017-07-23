@@ -43,6 +43,8 @@ var DemoLabels = {
 	    Support: 'Help'
 	};
 
+
+
 var bot = new builder.UniversalBot(connector, [
 	function (session){
 		// start the conversation with log in
@@ -92,12 +94,13 @@ var bot = new builder.UniversalBot(connector, [
                           
         }
         
+        results.response = selection ;
         next();
     },
     function (session, results){
     	
     	// check if the user wants to try more demos
-    	builder.Prompts.confirm(session, "You successfuly completed the demo. Do want to try more demos ?",
+    	builder.Prompts.confirm(session, "You successfuly completed the " + results.response + " demo. Do want to try more demos ?",
         		{ speak: "Do want to try more demos ?",
 	  		  retrySpeak:"Do want to try more demos ?",
 	  		  inputHint: builder.InputHint.expectingInput
