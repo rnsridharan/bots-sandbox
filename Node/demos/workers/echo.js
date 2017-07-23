@@ -9,6 +9,8 @@ Echo bot for basic validation of channels, connections,ssml features etc
 var builder = require('botbuilder');
 //default English ssml file
 var ssml = require('./../lib/ssml/locale/en/ssml');
+// include DemoHelpers functions
+var demohelpers = require('./../utils/DemoHelpers');
 
 
 //For federation you don't need to provide a connector but you should
@@ -30,16 +32,33 @@ bot.dialog('loopConversation', [
     		{
     		//basic prompt    		
     		builder.Prompts.text(session, 'Hi, I am an echo bot. Please say something..I will echo it back until you say Bye or End', 
-            		{speak: speak(session, 'Hi, I am an echo bot. Please say something..I will echo it back until you say Bye or End'),
+            		{speak: demohelpers.speak(session, 'Hi, I am an echo bot. Please say something..I will echo it back until you say Bye or End'),
             		inputHint: builder.InputHint.expectingInput
             		});
     		}
     		
     		else {
+    			/*
+    			var richresponse = {
+    				    title: 'G Boom Baa',
+    				    subtitle: 'Echo Bot demo',
+    				    contentType: 'image/jpg',
+    				    filePath: './images/somnath.jpg',
+    				    attachmentFileName: 'somnath.jpg',
+    				    answer: "You said.."+ args,
+    				    contentUrl: 'http://www.google.com'   				    
+    				};
+    			
+    			demohelpers.sendRichResponse(session, richresponse);
+    			*/
+    			
     			builder.Prompts.text(session, "You said.."+args,     		
-            	{speak: speak(session, "You said.."+args),
-        		inputHint: builder.InputHint.expectingInput
+            	{speak: demohelpers.speak(session, "You said.."+args),
+        		inputHint: builder.InputHint.acceptingInput
         		});
+        		
+    			
+    			
     		}
            	
     },
@@ -59,12 +78,6 @@ bot.dialog('loopConversation', [
 ]);
 
 
-/** Helper function to wrap SSML stored in the prompts file with <speak/> tag. */
-function speak(session, prompt) {
-    var localized = session.gettext(prompt);
-    console.log('Localised speech  ' + localized);
-    return ssml.speak(localized);
-}
 
 
 

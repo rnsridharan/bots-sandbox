@@ -6,8 +6,11 @@ module.exports = function (session) {
     session.send('Your message \'%s\' was registered. Once we resolve it; we will get back to you.', session.message.text);
     
     session.send('Thanks for contacting our support team. Your ticket number is %s.', tickerNumber);
-
+    
+    session.replaceDialog('/');
+    
+    /*
     session.endDialogWithResult({
         response: tickerNumber
-    });
+    });*/
 };

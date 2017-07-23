@@ -118,6 +118,9 @@ var bot = new builder.UniversalBot(connector, [
 ]);
 
 
+// add demo helper functions
+
+
 // add worker bots to maaster bot
 
 bot.library(signinbot.createLibrary());
@@ -127,9 +130,9 @@ bot.library(datacollectorbot.createLibrary());
 bot.library(qnabot.createLibrary());
 bot.library(knowledgebot.createLibrary());
 bot.dialog('help', require('./workers/help'))
-    .triggerAction({
-        matches: [/help/i, /support/i, /problem/i]
-    });
+.triggerAction({
+    matches: [/help/i, /support/i, /problem/i]
+});
 
 // log any bot errors into the console
 bot.on('error', function (e) {
