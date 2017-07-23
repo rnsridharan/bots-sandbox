@@ -43,7 +43,7 @@ var DemoLabels = {
 	    Support: 'Help'
 	};
 
-
+var demoselection = "";
 
 var bot = new builder.UniversalBot(connector, [
 	function (session){
@@ -84,34 +84,35 @@ var bot = new builder.UniversalBot(connector, [
             case DemoLabels.Echo:
                 return echobot.beginDialog(session);
             case DemoLabels.Polyglot:
-                return polyglotbot.beginDialog(session);
+                return polyglot.beginDialog(session);
             case DemoLabels.Datacollector:
-                return datacollectorbot.beginDialog(session);
+               return  datacollectorbot.beginDialog(session);
             case DemoLabels.QnA:
-                return qnabot.beginDialog(session);
+               return qnabot.beginDialog(session);
             case DemoLabels.Knowledge:
-                return knowledgebot.beginDialog(session);
-                          
+              return knowledgebot.beginDialog(session);
         }
         
-        results.response = selection ;
-        next();
     },
-    function (session, results){
-    	
+    
+    function(session, results){
     	// check if the user wants to try more demos
-    	builder.Prompts.confirm(session, "You successfuly completed the " + results.response + " demo. Do want to try more demos ?",
+    	builder.Prompts.confirm(session, "You successfuly completed the " + demoselection + " demo. Do want to try more demos ?",
         		{ speak: "Do want to try more demos ?",
 	  		  retrySpeak:"Do want to try more demos ?",
 	  		  inputHint: builder.InputHint.expectingInput
 		});
     },
+   
     function(session, results) {
     	
-    	if (results)
+    	if (session.response == 'yes'){
+    		
     		session.replaceDialog('/');
+    	}
+    		
     	else
-    		senssion.endDialog("Thank you for seeing my demo.. Bye..");
+    		session.endDialog("Thank you for your time to watch my demo.. Bye..");
     	
     }
 ]);
