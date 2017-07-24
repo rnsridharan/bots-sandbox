@@ -38,7 +38,7 @@ var bot = new builder.UniversalBot(connector, [
 ]);
 
 bot.dialog('loopConversation', [
-    function (session, args) {
+    function (session, args, next) {
     	if (!args)
     		{
     		//basic prompt    		
@@ -54,13 +54,13 @@ bot.dialog('loopConversation', [
         		inputHint: builder.InputHint.expectingInput
         		});
     		}
-           	
-    },
+        },
     function (session, results) {
        	session.dialogData.input = results.response ;
     	// Check for end of loop
        	var userinput = session.dialogData.input.toLowerCase();
-        if (userinput == 'end' || userinput == 'bye') {
+       	console.log("userinput = " + userinput);
+       	if (userinput == 'end.' || userinput == 'bye.') {
             // Return completed form
         	session.send("Bye..");
             session.endDialogWithResult({ response: session.dialogData.input });
