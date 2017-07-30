@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "botbuilder": "^3.8.2",
+    "botbuilder-cognitiveservices": "^1.1.0",
     "dotenv-extended": "^2.0.0",
     "restify": "^4.3.0"
   }
