@@ -1,7 +1,7 @@
 
 /*-----------------------------------------------------------------------------
 
-Echo bot for basic validation of channels, connections,ssml features etc
+Routing Demo Bot that routes to various demos
 
 -----------------------------------------------------------------------------*/
 
@@ -9,9 +9,17 @@ Echo bot for basic validation of channels, connections,ssml features etc
 require('dotenv-extended').load();
 var restify = require('restify');
 var builder = require('botbuilder');
-//default English ssml file
-var ssml = require('./lib/ssml/locale/en/ssml');
 
+
+// include worker bots 
+var signinbot = require('./workers/signin');
+var echobot = require('./workers/echo');
+var polyglotbot = require('./workers/polyglot');
+var datacollectorbot = require('./workers/datacollector');
+var qnabot = require('./workers/qna');
+var knowledgebot = require('./workers/knowledge');
+//include DemoHelpers functions
+var demohelpers = require('./utils/DemoHelpers');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -25,85 +33,112 @@ var connector = new builder.ChatConnector({
 });
 server.post('/api/messages', connector.listen());
 
+
+var DemoLabels = {
+	    Signin: 'Sign In Bot Demo',
+	    Echo: 'Echo Bot demo',
+	    Polyglot: 'Multi Lingual demo',
+	    Datacollector: 'Data Collector demo',
+	    QnA: 'Q & A demo',
+	    Knowledge: 'Knowledge demo',
+	    Support: 'Help'
+	};
+
+var demoselection = "";
+
 var bot = new builder.UniversalBot(connector, [
-	function (session) {
-		// basic echo
-		//session.send("Echo bot enter.." + session.message.text);
-		session.beginDialog('loopConversation');
+	function (session){
+		// start the conversation with log in
+		//signinbot.beginDialog(session);
+		// end dialog and conversation if the  signbot returns authentication failure message
+		// if authentication successful , then proceed with  next steps
+		
 	},
 	function (session, results) {
-	// optional function
-	}
-		
-]);
-
-bot.dialog('loopConversation', [
-    function (session, args, next) {
-    	if (!args)
-    		{
-    		//basic prompt    		
-    		builder.Prompts.text(session, 'Hi, I am an echo bot. Please say something..I will echo it back', 
-            		{speak: speak(session, 'Hi, I am an echo bot. Please say something..I will echo it back'),
-            		inputHint: builder.InputHint.expectingInput
-            		});
-    		}
-    		
-    		else {
-    			builder.Prompts.text(session, "You said.."+args,     		
-            	{speak: speak(session, "You said.."+args),
-        		inputHint: builder.InputHint.expectingInput
-        		});
-    		}
-        },
-    function (session, results) {
-       	session.dialogData.input = results.response ;
-    	// Check for end of loop
-       	var userinput = session.dialogData.input.toLowerCase();
-       	console.log("userinput = " + userinput);
-       	if (userinput == 'end.' || userinput == 'bye.') {
-            // Return completed form
-        	session.send("Bye..");
-            session.endDialogWithResult({ response: session.dialogData.input });
-        } else {
-            // Next
-            session.replaceDialog('loopConversation', session.dialogData.input);
-        }
-     }
-]);
-
-/*
-//Add Q&A dialog
-bot.dialog('q&aDialog', [
-    function (session, args) {
-        // Save previous state (create on first call)
-        session.dialogData.index = args ? args.index : 0;
-        session.dialogData.form = args ? args.form : {};
-
-        // Prompt user for next field
-        builder.Prompts.text(session, questions[session.dialogData.index].prompt);
+        // prompt for search option
+        builder.Prompts.choice(
+            session,
+            'Do you want to have a demo?.. Please choose one of the demos from the list',
+            [DemoLabels.Echo,  DemoLabels.Polyglot, DemoLabels.Datacollector,
+            	 DemoLabels.QnA, DemoLabels.Knowledge],
+            {
+                maxRetries: 3,
+                retryPrompt: 'Not a valid option'
+            });
     },
-    function (session, results) {
-        // Save users reply
-        var field = questions[session.dialogData.index++].field;
-        session.dialogData.form[field] = results.response;
-
-        // Check for end of form
-        if (session.dialogData.index >= questions.length) {
-            // Return completed form
-            session.endDialogWithResult({ response: session.dialogData.form });
-        } else {
-            // Next field
-            session.replaceDialog('q&aDialog', session.dialogData);
+    function (session, results,  next) {
+        if (!results.response) {
+            // exhausted attemps and no selection, start over
+            session.send('Ooops! Too many attemps :( But don\'t worry, I\'m handling that exception and you can try again!');
+            return session.endDialog();
         }
+
+        // on error, start over
+        session.on('error', function (err) {
+            session.send('Failed with message: %s', err.message);
+            session.endDialog();
+        });
+
+        // invoke worker bots based on user selection
+        var selection = results.response.entity;
+        switch (selection) {
+            case DemoLabels.Echo:
+                return echobot.beginDialog(session);
+            case DemoLabels.Polyglot:
+                return polyglotbot.beginDialog(session);
+            case DemoLabels.Datacollector:
+               return  datacollectorbot.beginDialog(session);
+            case DemoLabels.QnA:
+               return qnabot.beginDialog(session);
+            case DemoLabels.Knowledge:
+              return knowledgebot.beginDialog(session);
+        }
+        
+    },
+    
+    function(session, results){
+    	// check if the user wants to try more demos
+    	builder.Prompts.confirm(session, "You successfuly completed the " + demoselection + " demo. Do want to try more demos ?",
+        		{ speak: "Do want to try more demos ?",
+	  		  retrySpeak:"Do want to try more demos ?",
+	  		  inputHint: builder.InputHint.expectingInput
+		});
+    },
+   
+    function(session, results) {
+    	
+    	if (session.response == 'yes'){
+    		
+    		session.replaceDialog('/');
+    	}
+    		
+    	else
+    		session.endDialog("Thank you for your time to watch my demo.. Bye..",
+    			{speak: demohelpers.speak(session,"Thank you for your time to watch my demo. Bye")
+    			});
+    	
     }
 ]);
-*/
-/** Helper function to wrap SSML stored in the prompts file with <speak/> tag. */
-function speak(session, prompt) {
-    var localized = session.gettext(prompt);
-    console.log('Localised speech  ' + localized);
-    return ssml.speak(localized);
-}
 
 
+// add demo helper functions
+
+
+// add worker bots to maaster bot
+
+bot.library(signinbot.createLibrary());
+bot.library(echobot.createLibrary());
+bot.library(polyglotbot.createLibrary());
+bot.library(datacollectorbot.createLibrary());
+bot.library(qnabot.createLibrary());
+bot.library(knowledgebot.createLibrary());
+bot.dialog('help', require('./workers/help'))
+.triggerAction({
+    matches: [/help/i, /support/i, /problem/i]
+});
+
+// log any bot errors into the console
+bot.on('error', function (e) {
+    console.log('And error ocurred', e);
+});
 
