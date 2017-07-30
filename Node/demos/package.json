@@ -1,7 +1,7 @@
 {
   "name": "botbuilder-sample-rollerskill",
   "version": "1.0.0",
-  "description": "Bot Builder Sample - Roller Skill",
+  "description": "bots-sandbox - demos",
   "scripts": {
     "start": "node app.js"
   },
@@ -14,11 +14,11 @@
     "botbuilder-samples"
   ],
   "bugs": {
-    "url": "https://github.com/Microsoft/BotBuilder-Samples/issues"
+    "url": "https://github.com/rnsridharan/bots-sandbox/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/BotBuilder-Samples.git"
+    "url": "https://github.com/rnsridharan/bots-sandbox.git"
   },
   "dependencies": {
     "botbuilder": "^3.8.2",
