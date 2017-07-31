@@ -107,7 +107,7 @@ var bot = new builder.UniversalBot(connector, [
    
     function(session, results) {
     	
-    	if (session.response == 'yes'){
+    	if (results.response){
     		
     		session.replaceDialog('/');
     	}
