@@ -49,7 +49,7 @@ var demoselection = "";
 var bot = new builder.UniversalBot(connector, [
 	function (session){
 		// start the conversation with log in
-		//signinbot.beginDialog(session);
+		signinbot.beginDialog(session);
 		// end dialog and conversation if the  signbot returns authentication failure message
 		// if authentication successful , then proceed with  next steps
 		
