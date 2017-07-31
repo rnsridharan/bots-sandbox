@@ -12,6 +12,7 @@ module.exports = function () {
                     );
                 })
                 session.endDialog(msg);
+                //session.send(msg);
         }
     ])
 }

@@ -43,7 +43,8 @@ kbot.dialog('/promptButtons',[
             // route to corresponding dialogs
             switch (selection) {
                 case "Musician Explorer":
-                    session.replaceDialog('/musicianExplorer');
+                    //session.replaceDialog('/musicianExplorer');
+                	session.beginDialog('/musicianExplorer');
                     break;
                 case "Musician Search":
                     session.replaceDialog('/musicianSearch');
@@ -53,6 +54,31 @@ kbot.dialog('/promptButtons',[
                     break;
             }
         }
+                       	
+    },
+    
+    function(session, results) {
+    	console.log("Results resumed reason --" + results.resumed);
+      
+    	 // check if the user wants to try more demos
+        builder.Prompts.confirm(session, "Knowledge bot demo completd. Do want to try more demos of the knowledge bot? Please say or enter Yes or No",
+        		{ speak: "Do want to search more Knowledge bot demo completd. Do want to try more demos of the knowledge bot? Please say or enter Yes or No?",
+	  		  retrySpeak:"Knowledge bot demo completd. Do want to try more demos of the knowledge bot? Please say or enter Yes or No?",
+	  		  inputHint: builder.InputHint.expectingInput
+		});
+    },
+    function(session, results) {
+    	
+    	if (results.response){
+    		
+    		session.replaceDialog('/promptButtons');
+    	}
+    		
+    	else
+    		session.endDialog("Thank you for trying out the knowledge bot demo..",
+    			{speak: "Thank you for trying out the knowledge bot demo"
+    			});
+    	
     }
 ]);
 

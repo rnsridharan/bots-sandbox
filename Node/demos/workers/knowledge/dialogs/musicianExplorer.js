@@ -21,7 +21,7 @@ module.exports = function () {
                 }
             })
         },
-        function (session, results) {
+        function (session, results, next) {
             //Chooses just the era name - parsing out the count
             var era = results.response.entity.split(' ')[0];;
 
@@ -33,12 +33,38 @@ module.exports = function () {
                     console.log("Error when filtering by genre: " + err);
                 } else if (result && result['value'] && result['value'][0]) {
                     //If we have results send them to the showResults dialog (acts like a decoupled view)
-                    session.replaceDialog('/showResults', { result });
+                    //session.replaceDialog('/showResults', { result });
+                	session.beginDialog('/showResults', { result });
                 } else {
-                    session.endDialog("I couldn't find any musicians in that era :0");
+                    //session.endDialog("I couldn't find any musicians in that era :0");
+                	session.send("I couldn't find any musicians in that era :0 ");
+                	next();
                 }
-            })
+            });
+            
+        },
+        function (session, results) {
+        	 // check if the user wants to try more demos
+                builder.Prompts.confirm(session, "Would you like to try more MusicanExplorer ? Please say or enter Yes or No",
+                		{ speak: "Would you like to try more MusicanExplorer ? Please say or enter Yes or No",
+        	  		  retrySpeak:"Would you like to try more MusicanExplorer ? Please say or enter Yes or No",
+        	  		  inputHint: builder.InputHint.expectingInput
+        		});
+            },
+         function(session, results) {
+            	
+            	if (results.response){            		
+            		session.replaceDialog('/musicianExplorer');
+            	}
+            		
+            	else {
+            			session.endDialog("Thank you for trying out MusicanExplorer..",
+                			{speak: "Thank you for trying out MusicanExplorer"
+                			});
+            	}
+            		
         }
+        
     ]);
 }
 
