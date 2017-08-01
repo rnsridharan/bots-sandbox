@@ -30,8 +30,10 @@ bot.dialog('/',	[function(session){
 				console.log("Starting QnA dialog");
 				session.beginDialog('qnabot:/startQnA');
 			}
-]);
-
+]).cancelAction('cancelAction', 'Ok, hope you got answers for your questions.Bye.', { 
+    matches: /^nevermind$|^cancel$|^cancel.*faq|.*done.*/i,
+    confirmPrompt: "Are you sure?"
+});
 
 
 
@@ -49,7 +51,7 @@ bot.library(qnaMakerTools.createLibrary());
 	
 var basicQnAMakerDialog = new cognitiveservices.QnAMakerDialog({
 	recognizers: [recognizer],
-	defaultMessage: 'No match! Try changing the query terms!',
+	defaultMessage: 'No match! Please try asking different questions..!',
 	qnaThreshold: 0.3,
 	feedbackLib: qnaMakerTools
 });
@@ -73,15 +75,7 @@ basicQnAMakerDialog.defaultWaitNextMessage = function(session, qnaMakerResult){
 			console.log('KB Question: ' + qnaMakerResult.answers[0].questions[0]);
 			console.log('KB Answer: ' + qnaMakerResult.answers[0].answer);
 		}
-	
-	if (qnaMakerResult.answers[0].questions[0] == 'Done'){
-		session.send("QnA Ended");
-		session.endDialogWithResult("QnA Ended");
-	}
-	else {
-		session.replaceDialog('qnabot:/');
-	}
-	
+			
 }
 
 bot.dialog('/startQnA',basicQnAMakerDialog);

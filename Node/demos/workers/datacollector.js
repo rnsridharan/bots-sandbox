@@ -23,23 +23,45 @@ exports.beginDialog = function(session){
 
 bot.dialog('/',  [
 	function (session) {
-        builder.Prompts.text(session, "Hello... What's your name?");
+        builder.Prompts.text(session, "Hello... What's your name?",
+        		{speak: "Hello... What's your name?",
+    	    retrySpeak: "Hello... What's your name?",
+    	    inputHint: builder.InputHint.expectingInput
+    		});
     },
     function (session, results) {
         session.userData.name = results.response;
-        builder.Prompts.number(session, "Hi " + results.response + ", How many years have you been coding?"); 
+        builder.Prompts.number(session, "Hi " + results.response + ", How many years have you been coding?",
+        		{speak: "Hi " + results.response + ",How many years have you been coding?",
+        	    retrySpeak: "Hi " + results.response + ",How many years have you been coding?",
+        	    inputHint: builder.InputHint.expectingInput
+        		});
     },
     function (session, results) {
         session.userData.coding = results.response;
-        builder.Prompts.choice(session, "What language do you code Node using?", ["JavaScript", "CoffeeScript", "TypeScript"]);
+        builder.Prompts.choice(session, "What language do you code Node using?", ["JavaScript", "CoffeeScript", "TypeScript"],
+        		{speak: 'What language do you code Node using?',
+        	    	    retrySpeak: 'What language do you code Node using?',
+        	    	    inputHint: builder.InputHint.expectingInput
+        	    		});
     },
     function (session, results) {
         session.userData.language = results.response.entity;
-        session.send("Got it... " + session.userData.name + 
-                    " you've been programming for " + session.userData.coding + 
-                    " years and use " + session.userData.language + ".");
+        var finalMessage = "Got it... " + session.userData.name + 
+        " you've been programming for " + session.userData.coding + 
+        " years and use " + session.userData.language + ".";
+        
+       session.say(finalMessage, finalMessage,
+    		   {
+    	   		inputHint: builder.InputHint.ignoringInput 
+    		   });       
         // session.endDialogWithResult({ response: session.dialogData.input });
-        session.endDialog("Thanks.. Bye..");
+       session.send('Thanks.. Bye...');
+       var msg = new builder.Message(session)
+       .speak('Thanks.. Bye...')
+       .inputHint(builder.InputHint.ignoringInput);
+       session.send(msg).endDialog();
+
     }
 ]);
 

@@ -44,10 +44,22 @@ var DemoLabels = {
 	    Support: 'Help'
 	};
 
+var demochoices1 = [DemoLabels.Echo,  DemoLabels.Polyglot, DemoLabels.Datacollector,
+	 DemoLabels.QnA, DemoLabels.Knowledge];
+
+var demochoices2 = [DemoLabels.Echo,  DemoLabels.Polyglot, DemoLabels.Datacollector,
+	 DemoLabels.Knowledge];
+
+
+
+
+
+
 var demoselection = "";
 
 var bot = new builder.UniversalBot(connector, [
 	function (session){
+		 console.log("ChannelID = " + session.message.address.channelId);
 		// start the conversation with log in
 		signinbot.beginDialog(session);
 		// end dialog and conversation if the  signbot returns authentication failure message
@@ -56,14 +68,20 @@ var bot = new builder.UniversalBot(connector, [
 	},
 	function (session, results) {
         // prompt for search option
+		var demochoices = demochoices1;
+		// for cortana channel , give different demo choices
+		if ( session.message.address.channelId == 'cortana'){
+			demochoices = demochoices2;
+		}
+		
         builder.Prompts.choice(
             session,
-            'Do you want to have a demo?.. Please choose one of the demos from the list',
-            [DemoLabels.Echo,  DemoLabels.Polyglot, DemoLabels.Datacollector,
-            	 DemoLabels.QnA, DemoLabels.Knowledge],
+            'Hi, I am a demo bot .. Please choose one of the demos from the list',
+            demochoices,
             {
                 maxRetries: 3,
-                retryPrompt: 'Not a valid option'
+                retryPrompt: 'Not a valid option',
+                speak: 'Hi, I am a demo bot .. Please choose one of the demos from the list'
             });
     },
     function (session, results,  next) {
@@ -112,11 +130,15 @@ var bot = new builder.UniversalBot(connector, [
     		session.replaceDialog('/');
     	}
     		
-    	else
-    		session.endDialog("Thank you for your time to watch my demo.. Bye..",
-    			{speak: demohelpers.speak(session,"Thank you for your time to watch my demo. Bye")
-    			});
-    	
+    	else{
+    		
+    		session.say('Thank you for your time to watch my demos.. Bye..', 
+    			    'Thank you for your time to watch my demos.. Bye..', 
+    			    { inputHint: builder.InputHint.ignoringInput }
+    			);
+    		session.endDialog();
+    	}
+    		
     }
 ]);
 
